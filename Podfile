@@ -6,5 +6,6 @@ target 'Quiz App' do
   use_frameworks!
 
   # Pods for Quiz App
+  pod “PureLayout”
 
 end
