@@ -8,7 +8,7 @@
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-
+    var coordinator: MainCoordinator?
     var window: UIWindow?
 
 
@@ -19,7 +19,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: windowScene)
-        let vc = LoginViewController()
+        
+        let log = LoginViewController()
+        let vc = MyNavigationController(rootViewController: log)
+        
+        coordinator = MainCoordinator()
+        log.coordinator = coordinator
+        coordinator?.start()
+        
         window!.rootViewController = vc
         window?.makeKeyAndVisible()
     }
@@ -50,6 +57,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Called as the scene transitions from the foreground to the background.
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
+    }
+    
+    func changeRootViewController(_ vc: UIViewController, animated: Bool = true) {
+        guard let window = self.window else {return}
+        
+        window.rootViewController = vc
+        
+        UIView.transition(with: window,
+                          duration: 0.5,
+                          options: [.transitionFlipFromLeft],
+                          animations: nil,
+                          completion: nil)
     }
 
 

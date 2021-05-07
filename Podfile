@@ -7,5 +7,8 @@ target 'Quiz App' do
 
   # Pods for Quiz App
   pod “PureLayout”
+  
+  # Kingfisher for url images
+  pod 'Kingfisher', '~> 6.0'
 
 end

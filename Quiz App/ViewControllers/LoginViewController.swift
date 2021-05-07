@@ -11,6 +11,7 @@ import PureLayout
 
 
 class LoginViewController: UIViewController, UITextFieldDelegate{
+    weak var coordinator: MainCoordinator!
     
     private var titleLogo: UILabel!
     private var stackView: UIStackView!
@@ -33,8 +34,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate{
     
     @objc
     private func backgroundTapped(_ sender: UITapGestureRecognizer) {
-        self.username.endEditing(true)
-        self.password.endEditing(true)
+        username.endEditing(true)
+        password.endEditing(true)
     }
     
     
@@ -67,13 +68,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate{
         
         titleLogo = UILabel()
         
-        titleLogo.frame = CGRect(x: 0, y: 0, width: 140, height: 32)
         titleLogo.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
         titleLogo.font = UIFont(name: "SourceSansPro-Bold", size: 42)
-        
-        titleLogo.center = self.view.center
-        titleLogo.center.x = self.view.center.x
-        titleLogo.center.y = self.view.center.y
         
         titleLogo.textAlignment = .center
         titleLogo.text = "PopQuiz"
@@ -104,13 +100,12 @@ class LoginViewController: UIViewController, UITextFieldDelegate{
         
         username = PaddedTextField()
         
-        username.frame = CGRect(x: 0, y: 0, width: 311, height: 50)
-        username.layer.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.3).cgColor
+        username.layer.backgroundColor = UIColor.white.withAlphaComponent(0.3).cgColor
         
-        username.layer.cornerRadius = username.frame.height / 2
+        username.layer.cornerRadius = 50 / 2
         username.layer.borderWidth = 0
         username.layer.borderColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1).cgColor
-        username.font = UIFont(name: "SourceSansPro-Regular", size: 40)
+        username.font = UIFont(name: "SourceSansPro-Regular", size: 20)
         username.textColor = .white
         
         username.returnKeyType = .done
@@ -119,20 +114,19 @@ class LoginViewController: UIViewController, UITextFieldDelegate{
         
         stackView.addArrangedSubview(username)
         
-        username.autoSetDimension(.height, toSize: username.frame.height)
+        username.autoSetDimension(.height, toSize: 50)
         
         
         // Password text field
         
         password = PasswordTextField()
         
-        password.frame = CGRect(x: 0, y: 0, width: 311, height: 50)
         password.layer.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.3).cgColor
         
-        password.layer.cornerRadius = password.frame.height / 2
+        password.layer.cornerRadius = 50 / 2
         password.layer.borderWidth = 0
         password.layer.borderColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1).cgColor
-        password.font = UIFont(name: "SourceSansPro-Regular", size: 40)
+        password.font = UIFont(name: "SourceSansPro-Regular", size: 20)
         password.textColor = .white
         
         password.returnKeyType = .done
@@ -141,12 +135,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate{
         
         stackView.addArrangedSubview(password)
         
-        password.autoSetDimension(.height, toSize: password.frame.height)
+        password.autoSetDimension(.height, toSize: 50)
         
         
         // Button for login
         loginButton = UIButton(type: .system)
-        loginButton.frame = CGRect(x: 0, y: 0, width: 331, height: 50)
         
         loginButton.backgroundColor = .lightGray
         loginButton.setTitle("Login", for: .normal)
@@ -154,38 +147,23 @@ class LoginViewController: UIViewController, UITextFieldDelegate{
         loginButton.setTitleColor(UIColor(red: 0.54, green: 0.15, blue: 0.24, alpha: 0.6), for: .normal)
         
         loginButton.layer.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.6).cgColor
-        loginButton.layer.cornerRadius = loginButton.frame.height / 2
+        loginButton.layer.cornerRadius = 50 / 2
         loginButton.layer.borderWidth = 0
-        
         stackView.addArrangedSubview(loginButton)
         
-        loginButton.autoSetDimension(.height, toSize: loginButton.frame.height)
+        loginButton.autoSetDimension(.height, toSize: 50)
         
         loginButton.addTarget(self, action: #selector(logIn), for: .touchUpInside)
     }
     
     @objc
     func logIn() {
-        if let email = username.text {
-            if let pass = password.text {
-                if email != "" && pass != "" {
-                    
-                    username.text = ""
-                    password.text = ""
-                    
-                    print("email:\t\(email)\npassword:\t\(pass)\n")
-                    
-                    let dataService = DataService()
-                    
-                    switch dataService.login(email: email, password: pass) {
-                    case .success:
-                        makeTabBarController()
-                    default:
-                        break
-                    }
-                    
-                }
-            }
+        if let email = username.text, let pass = password.text, email != "" && pass != "" {
+                
+            username.text = ""
+            password.text = ""
+            
+            coordinator.login(email, pass)
         }
         username.resignFirstResponder()
         password.resignFirstResponder()
@@ -239,32 +217,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate{
             loginButton.isEnabled = false
         }
     }
-    
-    
-    private func makeTabBarController() {
-        let bottomTabBarControl = UITabBarController()
-        
-        let quizVC = QuizzesViewController()
-        let searchVC = SearchViewController()
-        let settingVC = SettingsViewController()
-        
-        quizVC.title = "Quiz"
-        searchVC.title = "Search"
-        settingVC.title = "Settings"
-        
-        bottomTabBarControl.setViewControllers([quizVC, searchVC, settingVC], animated: false)
-        
-        guard let pages = bottomTabBarControl.tabBar.items else {
-            return
-        }
-        
-        pages[0].image = UIImage(named: "icons8-stopwatch")
-        pages[1].image = UIImage(named: "icons8-search")
-        pages[2].image = UIImage(systemName: "gear")
-        
-        bottomTabBarControl.modalPresentationStyle = .fullScreen
-        present(bottomTabBarControl, animated: false)
-    }
 }
 
 
@@ -312,7 +264,7 @@ class PasswordTextField: PaddedTextField {
     
     @objc
     private func showHidePass(_ sender: UIButton) {
-        sender.isSelected = !sender.isSelected
+        sender.isSelected.toggle()
         self.isSecureTextEntry = !sender.isSelected
     }
 }

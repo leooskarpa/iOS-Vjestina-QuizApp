@@ -1,9 +1,8 @@
 class DataService: DataServiceProtocol {
 
     func login(email: String, password: String) -> LoginStatus {
-        let succesLogin = email == "ios-vjestina@five.agency" && password == "password"
-//        let succesLogin = email == "a" && password == "a"
-
+//        let succesLogin = email == "ios-vjestina@five.agency" && password == "password"
+        let succesLogin = email == "a" && password == "a"
         return succesLogin ? .success : .error(400, "Bad Request")
     }
 
@@ -15,7 +14,7 @@ class DataService: DataServiceProtocol {
                 description: "This is a quiz for beginners in sport.",
                 category: .sport,
                 level: 1,
-                imageUrl: "https://www.publicdomainpictures.net/pictures/300000/velka/football-strategy.jpg",
+                imageUrl: "https://www.publicdomainpictures.net/pictures/300000/velka/football-strategy.jpg", // kingfisher
                 questions: [
                     Question(
                         id: 31,

@@ -1,16 +1,20 @@
 PODS:
+  - Kingfisher (6.3.0)
   - PureLayout (3.1.8)
 
 DEPENDENCIES:
+  - Kingfisher (~> 6.0)
   - PureLayout
 
 SPEC REPOS:
   trunk:
+    - Kingfisher
     - PureLayout
 
 SPEC CHECKSUMS:
+  Kingfisher: 6c3df386db71d82c0817a429d2c9421a77396529
   PureLayout: a4afb3d79dd958564ce33d22c89f407280d8e6a8
 
-PODFILE CHECKSUM: 2cf2abde3a2b4ce260aaace92ee92058a9ff30f0
+PODFILE CHECKSUM: 660e9e3cf2d3afcf7faf4c940521717badc9c1f1
 
 COCOAPODS: 1.10.1
