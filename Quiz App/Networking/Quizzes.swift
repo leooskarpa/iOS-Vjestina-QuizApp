@@ -6,3 +6,9 @@
 //
 
 import Foundation
+import UIKit
+
+
+struct Quizzes: Codable {
+    let quizzes: [Quiz]
+}

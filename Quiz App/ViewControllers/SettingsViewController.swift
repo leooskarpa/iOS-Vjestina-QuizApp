@@ -11,18 +11,12 @@ import PureLayout
 
 
 class SettingsViewController: UIViewController {
+    var coordinator: MainCoordinator!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         loadBackground()
-        
-        let title = UILabel()
-        title.font = UIFont(name: "SourceSansPro-Bold", size: 42)
-        title.textColor = .white
-        title.text = "Work in progress..."
-        
-        self.view!.addSubview(title)
-        title.autoAlignAxis(toSuperviewAxis: .vertical)
-        title.autoAlignAxis(toSuperviewAxis: .horizontal)
+        loadViews()
     }
     
     private func loadBackground() {
@@ -47,6 +41,56 @@ class SettingsViewController: UIViewController {
 
         let parent = self.view!
         parent.addSubview(view)
+    }
+    
+    private func loadViews() {
+        
+        // Username Label
+        let usernameLabel = UILabel()
+        usernameLabel.text = "USERNAME"
+        usernameLabel.textColor = .white
+        usernameLabel.font = UIFont(name: "SourceSansPro-Regular", size: 18)
+        
+        self.view.addSubview(usernameLabel)
+        usernameLabel.autoPinEdge(toSuperviewEdge: .top, withInset: 100)
+        usernameLabel.autoPinEdge(toSuperviewEdge: .leading, withInset: 50)
+        
+        
+        // Username
+        let username = UILabel()
+        username.text = "ios-vjestina@five.agency"
+        username.textColor = .white
+        username.font = UIFont(name: "SourceSansPro-Bold", size: 24)
+        
+        self.view.addSubview(username)
+        username.autoPinEdge(.top, to: .bottom, of: usernameLabel, withOffset: 10)
+        username.autoPinEdge(toSuperviewEdge: .leading, withInset: 50)
+        
+        
+        // Logout button
+        let logoutBtn = UIButton()
+        logoutBtn.backgroundColor = .lightGray
+        logoutBtn.setTitle("Log Out", for: .normal)
+        logoutBtn.titleLabel?.font = UIFont(name: "SourceSansPro-Bold", size: 18)
+        logoutBtn.setTitleColor(UIColor(red: 0.54, green: 0.15, blue: 0.24, alpha: 1), for: .normal)
+        
+        logoutBtn.layer.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1).cgColor
+        logoutBtn.layer.cornerRadius = 50 / 2
+        logoutBtn.layer.borderWidth = 0
+        
+        
+        self.view.addSubview(logoutBtn)
+        logoutBtn.autoSetDimension(.height, toSize: 50)
+        logoutBtn.autoPinEdge(toSuperviewEdge: .bottom, withInset: 200)
+        logoutBtn.autoPinEdge(toSuperviewEdge: .leading, withInset: 50)
+        logoutBtn.autoPinEdge(toSuperviewEdge: .trailing, withInset: 50)
+        
+        logoutBtn.addTarget(self, action: #selector(logout), for: .touchUpInside)
+    }
+    
+    @objc
+    func logout() {
+        coordinator.logout()
     }
 }
 

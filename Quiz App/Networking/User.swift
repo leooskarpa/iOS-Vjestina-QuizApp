@@ -6,3 +6,10 @@
 //
 
 import Foundation
+import UIKit
+
+struct User: Codable {
+    let token: String
+    let user_id: Int
+}
+

@@ -10,30 +10,30 @@ import UIKit
 
 
 class NetworkService {
-    func executeUrlRequest<T: Decodable>(_ request: URLRequest, completionHandler: @escaping(T?, RequestError?) -> Void) {
+    func executeUrlRequest<T: Codable>(_ request: URLRequest, completionHandler: @escaping(Result<T, RequestError>) -> Void) {
         let dataTask = URLSession.shared.dataTask(with: request) { data, response, err in
-            
-            guard err != nil else {
-                completionHandler(nil, .clientError)
+
+            guard err == nil else {
+                completionHandler(.failure(.clientError))
                 return
             }
             
             guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
-                completionHandler(nil, .serverError)
+                completionHandler(.failure(.serverError))
                 return
             }
             
             guard let data = data else {
-                completionHandler(nil, .noData)
+                completionHandler(.failure(.noData))
                 return
             }
             
             guard let value = try? JSONDecoder().decode(T.self, from: data) else {
-                completionHandler(nil, .dataEncodingError)
+                completionHandler(.failure(.dataEncodingError))
                 return
             }
             
-            completionHandler(value, nil)
+            completionHandler(.success(value))
             
         }
         dataTask.resume()

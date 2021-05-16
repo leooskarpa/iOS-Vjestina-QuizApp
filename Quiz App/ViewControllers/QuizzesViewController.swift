@@ -10,6 +10,8 @@ import UIKit
 import PureLayout
 
 class QuizzesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource{
+    weak var coordinator: QuizCoordinator!
+    
     private var logoTitle: UILabel!
     private var getQuizzesButton: UIButton!
     private var stack: UIStackView!
@@ -20,6 +22,12 @@ class QuizzesViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func viewDidLoad() {
         super.viewDidLoad()
         loadBackground()
+        
+        // Remove title from navigation controller and back button
+        self.title = nil
+        let backButton = UIBarButtonItem(title: nil, style: .done, target: nil, action: nil)
+        navigationItem.backBarButtonItem = backButton
+        self.navigationController?.navigationBar.tintColor = .white
         
         // Logo title on top
         logoTitle = UILabel(frame: CGRect(x: 0, y: 0, width: 140, height: 32))
@@ -140,12 +148,31 @@ class QuizzesViewController: UIViewController, UITableViewDelegate, UITableViewD
             return
         }
         
+        let url = URL(string: "https://iosquiz.herokuapp.com/api/quizzes")
+        
+        var request = URLRequest(url: url!)
+        request.httpMethod = "GET"
+        
+        NetworkService().executeUrlRequest(request) { (result: Result<Quizzes, RequestError>) in
+            DispatchQueue.main.async {
+                switch result {
+                case .failure(_):
+                    print("Failed loading quizzes")
+                    break
+                
+                case .success(let results):
+                    self.quizzes = results.quizzes
+                    self.getQuizzes()
+                    break
+                }
+            }
+        }
+    }
+    
+    private func getQuizzes() {
+        
         stack.isHidden = true
         gottenQuizzes = true
-        
-        
-        let dataService = DataService()
-        quizzes = dataService.fetchQuizes()
         
         var num = 0
         
@@ -204,7 +231,6 @@ class QuizzesViewController: UIViewController, UITableViewDelegate, UITableViewD
         quizTable.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
         quizTable.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
         quizTable.autoPinEdge(toSuperviewEdge: .bottom, withInset: 50)
-        
     }
     
     
@@ -215,11 +241,9 @@ class QuizzesViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let data = DataService()
-        let datalist = data.fetchQuizes()
         var counter = 0
         
-        for quiz in datalist {
+        for quiz in quizzes {
             if quiz.category == QuizCategory.allCases[section] {
                 counter += 1
             }
@@ -273,6 +297,7 @@ class QuizzesViewController: UIViewController, UITableViewDelegate, UITableViewD
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        // Other things
+        let selectedCell = tableView.cellForRow(at: indexPath) as! QuizTableViewCell
+        coordinator.selected(selectedCell.getQuiz())
     }
 }
