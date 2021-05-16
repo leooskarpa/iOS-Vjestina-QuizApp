@@ -12,12 +12,18 @@ import PureLayout
 class QuizTableViewCell: UITableViewCell {
     var quiz: Quiz! {
         didSet {
-            switch quiz.category {
-            case .sport:
-                quizImage.image = UIImage(named: "icons8-trophy")
-            case .science:
-                quizImage.image = UIImage(named: "icons8-laboratory")
-            }
+            let url = URL(string: quiz.image)
+            URLSession.shared.dataTask(with: url!) { data, response, err in
+                guard err == nil else {
+                    return
+                }
+                
+                DispatchQueue.main.async {
+                    self.quizImage.image = UIImage(data: data!)
+                }
+                
+            }.resume()
+            
             quizTitle.text = quiz?.title
             quizDescription.text = quiz?.description
             quizLevel = quiz?.level
@@ -81,6 +87,10 @@ class QuizTableViewCell: UITableViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func getQuiz() -> Quiz {
+        return quiz
     }
 }
 
